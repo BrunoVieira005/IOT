@@ -1,25 +1,27 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import devices from '@/views/devices.vue'
+import Devices from '@/views/Devices.vue'
 import Management from '@/views/Management.vue'
 import NotFound from '@/views/NotFound.vue'
-import { ErrorCodes } from 'vue'
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      component: devices,
-      path: '/'
+      component: Devices,
+      path: '/',
+      name: 'devices'
     },
     {
       component: Management,
-      path: '/Management'
+      path: '/management',
+      name: 'management'
     },
     {
       component: NotFound,
-      path: '/:pathMatch(.*)*'
-    },
+      path: '/:pathMatch(.*)*',
+      name: 'not-found'
+    }
+    
   ],
 })
 
