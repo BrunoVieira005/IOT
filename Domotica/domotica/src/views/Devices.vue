@@ -11,7 +11,6 @@ ar.icon = 'heat_pump';
 
 const tv: Device = reactive(new Device());
 tv.name = 'Smart TV LG';
-tv.favorite = true;
 tv.icon = 'tv';
 
 const iluminacao: Device = reactive(new Device());
