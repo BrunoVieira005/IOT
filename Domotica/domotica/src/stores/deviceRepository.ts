@@ -1,4 +1,3 @@
-
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { Device, Environment } from '@/models/devices'
