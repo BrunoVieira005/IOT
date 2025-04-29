@@ -1,22 +1,37 @@
 <script setup lang="ts">
 import DeviceComponent from '@/components/DeviceComponent.vue';
 import EnvironmentComponent from '@/components/EnvironmentComponent.vue';
-import { Device, Environment } from '@/models/devices';
+import { Device, Environment, mapApiResponseToEnvironments } from '@/models/devices';
 import { ref, reactive, onMounted } from 'vue';
 import { useDeviceRepository } from '@/stores/deviceRepository';
+import { getEnvironments } from '@/services/cdnService';
+import { saveEnvironment } from '@/services/apiService';
 
 const selectedEnvironment = ref(new Environment());
 const newEnv = reactive(new Environment());
 const showNewEnvForm = ref(false);
 
-const saveNewEnv = ()=> {
-    useDeviceRepository().addEnvironment(newEnv);
+const saveNewEnv = async ()=> {
+    await saveEnvironment(newEnv.name);
     showNewEnvForm.value = false;
 }
 
 onMounted(() => {
     selectedEnvironment.value =  useDeviceRepository().environments[0] ?? new Environment();
 })
+
+
+const allEnvironments: Array<Environment> = reactive([]);
+
+getEnvironments()
+    .then(response =>{
+        mapApiResponseToEnvironments(response).forEach(item=> 
+            allEnvironments.push(item)
+        );         
+    })
+    .catch(error =>{
+        console.error("Error when getting environments", error);
+    });
 </script>
 
 <template>
@@ -26,11 +41,11 @@ onMounted(() => {
             <div class="flex flex-row m-3">
                 <label for="selectedEnv" class="mr-3">Ambiente:</label>
                 <select id="selectedEnv" v-model="selectedEnvironment">
-                    <option v-for="(currentEnv, envId) in useDeviceRepository().environments" :key="envId" 
+                    <option v-for="(currentEnv, envId) in allEnvironments" :key="envId" 
                       :value="currentEnv">
                         {{ currentEnv.name }}
                     </option>
-                    <option value="" v-if="useDeviceRepository().environments.length == 0">
+                    <option value="" v-if="allEnvironments.length == 0">
                         Sem Ambientes!
                     </option>                      
                 </select>

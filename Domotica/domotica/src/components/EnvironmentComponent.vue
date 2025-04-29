@@ -1,9 +1,10 @@
 <script setup lang="ts">
-   import { Device, Environment } from '@/models/devices';
+   import { Device, Environment, mapApiResponseToEnvironments } from '@/models/devices';
    import DeviceComponent from './DeviceComponent.vue';
    import AddNewDeviceComponent from './AddNewDeviceComponent.vue';
    import { reactive, ref } from 'vue';
-import { useDeviceRepository } from '@/stores/deviceRepository';
+   import { useDeviceRepository } from '@/stores/deviceRepository';
+import { getEnvironments } from '@/services/cdnService';
     
     const props = defineProps({
         environment: { type: Environment, required: true },
@@ -22,7 +23,8 @@ import { useDeviceRepository } from '@/stores/deviceRepository';
 
     const removeDevice = (index:number)=> {        
         useDeviceRepository().removeDevice(props.environment, index);
-    }
+    }    
+    
 </script>
 
 <template>
@@ -33,7 +35,10 @@ import { useDeviceRepository } from '@/stores/deviceRepository';
                 <DeviceComponent :showButtons="showDeviceButtons" :device="currentDevice" 
                     :index="id" @deviceDeleteEvent="removeDevice"/>
             </div>
-            <AddNewDeviceComponent @newDeviceEvent="showNewDeviceForm = !showNewDeviceForm" />                 
+            <p v-if="!props.environment.devices" class="w-full ml-3">
+                Sem Dispositivos!!! 
+            </p>
+            <AddNewDeviceComponent v-if="!props.showDeviceButtons" @newDeviceEvent="showNewDeviceForm = !showNewDeviceForm" />                 
             <div v-if="showNewDeviceForm">
                 <div>
                     <label for="">Nome:</label>
@@ -52,6 +57,5 @@ import { useDeviceRepository } from '@/stores/deviceRepository';
     </section>
 </template>
 
-<style scoped lang="scss">
-
+<style scoped lang="scss">    
 </style>

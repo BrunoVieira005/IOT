@@ -1,32 +1,23 @@
 <script setup lang="ts">
 import DeviceComponent from '@/components/DeviceComponent.vue';
 import EnvironmentComponent from '@/components/EnvironmentComponent.vue';
-import { ApiResponse, Device, Environment } from '@/models/devices';
+import { ApiResponse, Device, Environment, mapApiResponseToEnvironments } from '@/models/devices';
 import { getDevices, getEnvironments } from '@/services/cdnService';
 import { ref, reactive, onMounted, type Ref } from 'vue';
 
 const allEnvironments: Array<Environment> = reactive([]);
-/*const environmentResponse: Ref<ApiResponse<Environment>> = 
-    ref(new ApiResponse());*/
-
 onMounted(()=>{
 
   getEnvironments()
     .then(response =>{
-        //environmentResponse.value = response;
-
-        response.items.forEach(item=> {
-            if(item.fields) allEnvironments.push(item.fields);
-        }); 
-        
-        console.log("allEnvironments", allEnvironments)
+        mapApiResponseToEnvironments(response).forEach(item=> 
+             allEnvironments.push(item)
+        );         
     })
     .catch(error =>{
         console.error("Error when getting environments", error);
     });
-
 });
-
 </script>
 
 <template>
